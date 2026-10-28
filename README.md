@@ -1,32 +1,61 @@
-<<<<<<< HEAD
-# Sample Hardhat Project
+# ChainVote
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+## Overview
+ChainVote is a decentralized, full-stack polling application built on the Ethereum Sepolia testnet. It allows users to create polls and cast votes directly from their crypto wallets. Unlike traditional polling apps that rely on a centralized backend database (which can be tampered with), ChainVote stores every vote as an immutable transaction on the blockchain. 
 
-Try running some of the following tasks:
+The core philosophy is simple: **Votes you can audit, not just trust.**
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
-```
-=======
-# React + Vite
+## Features
+* **Wallet Authentication:** Passwordless login using MetaMask.
+* **Create Polls:** Users can create custom polls with multiple options and set a specific duration (in minutes) for how long voting remains open.
+* **One Wallet, One Vote:** Smart contract logic strictly enforces that a single wallet address can only vote once per poll, preventing spam and duplicate voting.
+* **Live Results:** Real-time visual progress bars show the percentage of votes for each option.
+* **On-Chain Audit Tool:** A built-in audit feature that queries the blockchain logs (events), recalculates the votes in the browser, and verifies that the displayed results match the actual on-chain data perfectly.
+* **Privacy & Transparency:** No backend server is required. The file never touches a centralized database, and anyone can verify the contract directly on Etherscan.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Demo
+* **Live Application:** [(https://chainvote-frontend.vercel.app/)]
+* **Smart Contract (Sepolia):** [`0xa1C6c0CC5E49e3284e674015E5d82f050fa3848C`](https://sepolia.etherscan.io/address/0xa1C6c0CC5E49e3284e674015E5d82f050fa3848C)
 
-Currently, two official plugins are available:
+## Demo Video
+* **Watch the 2-minute walkthrough here:** [(https://drive.google.com/file/d/1vmyubmnd8pzHVjdVhwy4K7bpLaFvy0BR/view?usp=sharing)]
+*(The video demonstrates wallet connection, poll creation, the double-vote prevention mechanism, and the on-chain audit feature).*
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
+**Frontend:**
+* React.js (via Vite)
+* Ethers.js (v6) for blockchain interaction
+* Vanilla CSS (custom styling, responsive design)
 
-## React Compiler
+**Blockchain / Backend:**
+* Solidity (v0.8.28) for the Smart Contract
+* Hardhat (development environment, testing, and deployment)
+* Sepolia Testnet (Ethereum)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Architecture
+ChainVote operates on a serverless architecture. The blockchain acts as the database, and the smart contract acts as the backend logic.
 
-## Expanding the ESLint configuration
+1. **User** interacts with the **React Frontend**.
+2. The frontend uses **Ethers.js** to request a signature from **MetaMask**.
+3. MetaMask broadcasts the transaction to the **Sepolia Network**.
+4. The **Smart Contract** validates the transaction (e.g., checking if the user already voted), executes the logic, and emits an event.
+5. The frontend queries the contract directly to read the updated state and renders the results.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
->>>>>>> f667f54ab75cc9db3a9e49255df298385fb13d60
+## Project Structure
+```text
+chainVote/ (Hardhat Project)
+├── contracts/
+│   └── ChainVote.sol       # The Solidity smart contract
+├── scripts/
+│   └── deploy.js           # Script to deploy to Sepolia
+├── .env                    # Stores RPC URL and Private Key (Ignored in Git)
+└── hardhat.config.js       # Hardhat configuration
+
+chainvote-frontend/ (React Project)
+├── src/
+│   ├── abi.js              # Contract Address and ABI
+│   ├── contract.js         # Ethers.js connection logic
+│   ├── App.jsx             # Main React UI
+│   ├── App.css             # Styling
+│   └── main.jsx            # React entry point
+└── package.json
